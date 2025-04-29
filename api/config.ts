@@ -6,7 +6,7 @@ const config = {
   rootPath,
   publicPath: path.join(rootPath, 'public'),
   mongoose: {
-    db: 'mongodb://localhost/request',
+    db: 'mongodb://localhost:55000/request',
   },
 };
 
