@@ -51,7 +51,7 @@ requestRouter.get('/', async (req, res, next) => {
 requestRouter.patch('/:id', async (req, res, next) => {
   try {
     const requestId = req.params.id;
-    const { start, complete, cancel } = req.query;
+    const { start, complete, cancel, cancel_in_work } = req.query;
 
     const request = await Requests.findById(requestId);
 
@@ -92,6 +92,21 @@ requestRouter.patch('/:id', async (req, res, next) => {
       await request.save();
 
       res.send(request);
+    }
+
+    if (cancel_in_work && request) {
+      const inProgressRequest = await Requests.find({
+        status: 'in_progress',
+      });
+
+      await Promise.all(
+        inProgressRequest.map((item) => {
+          item.status = 'cancelled';
+          return item.save();
+        }),
+      );
+
+      res.send(inProgressRequest);
     }
 
     res.status(404).json({ error: 'No such parameter' });
