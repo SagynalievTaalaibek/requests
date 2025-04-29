@@ -19,8 +19,30 @@ requestRouter.post('/', async (req, res, next) => {
 
 requestRouter.get('/', async (req, res, next) => {
   try {
-    const requests = await Requests.find();
-    res.send(requests);
+    const { status, date, from, to } = req.query;
+
+    const filter: any = {};
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (date) {
+      filter.createdAt = {
+        $gte: new Date(date + 'T00:00:00.000Z'),
+        $lte: new Date(date + 'T23:59:59.999Z'),
+      };
+    }
+
+    if (from && to) {
+      filter.createdAt = {
+        $gte: new Date(from as string),
+        $lte: new Date(to as string),
+      };
+    }
+
+    const requests = await Requests.find(filter).sort({ createdAt: -1 });
+    res.json(requests);
   } catch (e) {
     next(e);
   }
