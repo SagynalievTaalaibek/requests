@@ -9,7 +9,7 @@ export default defineConfig([
     plugins: {
       js,
     },
-    extends: ['js/recommended'],
+    extends: ['js/recommended', ...tseslint.configs.recommended],
     languageOptions: {
       globals: globals.node,
     },
@@ -24,6 +24,4 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
-
-  ...tseslint.configs.recommended,
 ]);
